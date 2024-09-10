@@ -1,6 +1,6 @@
 #pragma once
-
-#include "functions/quorem_preinv.cu"
+#include "cuda_runtime.h"
+#include "../functions/quorem_preinv.cu"
 
 namespace cuFIXNUM {
 

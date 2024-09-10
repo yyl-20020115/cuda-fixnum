@@ -1,16 +1,18 @@
 #include <cstdio>
 #include <cstring>
+#include <string>
 #include <cassert>
+#include <cuda_runtime.h>
 
-#include "fixnum/warp_fixnum.cu"
-#include "array/fixnum_array.h"
-#include "functions/modexp.cu"
-#include "functions/multi_modexp.cu"
-#include "modnum/modnum_monty_redc.cu"
-#include "modnum/modnum_monty_cios.cu"
+#include "../src/fixnum/word_fixnum.cu"
+#include "../src/fixnum/warp_fixnum.cu"
+#include "../src/functions/modexp.cu"
+#include "../src/functions/multi_modexp.cu"
+#include "../src/array/fixnum_array.h"
+#include "../src/modnum/modnum_monty_redc.cu"
 
 using namespace std;
-using namespace cuFIXNUM;
+//using namespace cuFIXNUM;
 
 template< typename fixnum >
 struct mul_lo {
@@ -44,7 +46,7 @@ struct my_modexp {
     typedef typename modnum::fixnum fixnum;
 
     __device__ void operator()(fixnum &z, fixnum x) {
-        modexp<modnum> me(x, x);
+        cuFIXNUM::modexp<modnum> me(x, x);
         fixnum zz;
         me(zz, x);
         z = zz;
@@ -56,7 +58,7 @@ struct my_multi_modexp {
     typedef typename modnum::fixnum fixnum;
 
     __device__ void operator()(fixnum &z, fixnum x) {
-        multi_modexp<modnum> mme(x);
+        cuFIXNUM::multi_modexp<modnum> mme(x);
         fixnum zz;
         mme(zz, x, x);
         z = zz;
@@ -65,8 +67,8 @@ struct my_multi_modexp {
 
 template< int fn_bytes, typename word_fixnum, template <typename> class Func >
 void bench(int nelts) {
-    typedef warp_fixnum<fn_bytes, word_fixnum> fixnum;
-    typedef fixnum_array<fixnum> fixnum_array;
+    typedef cuFIXNUM::warp_fixnum<fn_bytes, word_fixnum> fixnum;
+    typedef cuFIXNUM::fixnum_array<fixnum> fixnum_array;
 
     if (nelts == 0) {
         puts(" -*-  nelts == 0; skipping...  -*-");
@@ -104,39 +106,39 @@ void bench_func(const char *fn_name, int nelts) {
     printf("Function: %s, #elts: %de3\n", fn_name, (int)(nelts * 1e-3));
     printf("fixnum digit  total data   time       Kops/s\n");
     printf(" bits  bits     (MiB)    (seconds)\n");
-    bench<4, u32_fixnum, Func>(nelts);
-    bench<8, u32_fixnum, Func>(nelts);
-    bench<16, u32_fixnum, Func>(nelts);
-    bench<32, u32_fixnum, Func>(nelts);
-    bench<64, u32_fixnum, Func>(nelts);
-    bench<128, u32_fixnum, Func>(nelts);
+    bench<4, cuFIXNUM::u32_fixnum, Func>(nelts);
+    bench<8, cuFIXNUM::u32_fixnum, Func>(nelts);
+    bench<16, cuFIXNUM::u32_fixnum, Func>(nelts);
+    bench<32, cuFIXNUM::u32_fixnum, Func>(nelts);
+    bench<64, cuFIXNUM::u32_fixnum, Func>(nelts);
+    bench<128, cuFIXNUM::u32_fixnum, Func>(nelts);
     puts("");
 
-    bench<8, u64_fixnum, Func>(nelts);
-    bench<16, u64_fixnum, Func>(nelts);
-    bench<32, u64_fixnum, Func>(nelts);
-    bench<64, u64_fixnum, Func>(nelts);
-    bench<128, u64_fixnum, Func>(nelts);
-    bench<256, u64_fixnum, Func>(nelts);
+    bench<8, cuFIXNUM::u64_fixnum, Func>(nelts);
+    bench<16, cuFIXNUM::u64_fixnum, Func>(nelts);
+    bench<32, cuFIXNUM::u64_fixnum, Func>(nelts);
+    bench<64, cuFIXNUM::u64_fixnum, Func>(nelts);
+    bench<128, cuFIXNUM::u64_fixnum, Func>(nelts);
+    bench<256, cuFIXNUM::u64_fixnum, Func>(nelts);
     puts("");
 }
 
 template< typename fixnum >
-using modexp_redc = my_modexp< modnum_monty_redc<fixnum> >;
+using modexp_redc = my_modexp< cuFIXNUM::modnum_monty_redc<fixnum> >;
 
 template< typename fixnum >
-using modexp_cios = my_modexp< modnum_monty_cios<fixnum> >;
+using modexp_cios = my_modexp< cuFIXNUM::modnum_monty_cios<fixnum> >;
 
 template< typename fixnum >
-using multi_modexp_redc = my_multi_modexp< modnum_monty_redc<fixnum> >;
+using multi_modexp_redc = my_multi_modexp< cuFIXNUM::modnum_monty_redc<fixnum> >;
 
 template< typename fixnum >
-using multi_modexp_cios = my_multi_modexp< modnum_monty_cios<fixnum> >;
+using multi_modexp_cios = my_multi_modexp< cuFIXNUM::modnum_monty_cios<fixnum> >;
 
 int main(int argc, char *argv[]) {
     long m = 1;
     if (argc > 1)
-        m = atol(argv[1]);
+        m = stol(argv[1]);
     m = std::max(m, 1000L);
 
     bench_func<mul_lo>("mul_lo", m);

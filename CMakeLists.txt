@@ -1,0 +1,24 @@
+cmake_minimum_required(VERSION 3.26)
+project(CUDA-FIXNUM C CXX CUDA)
+
+
+set(CMAKE_CUDA_ARCHITECTURES 86)
+find_package(CUDAToolkit REQUIRED)
+
+set(CMAKE_CUDA_ARCHIVE_DRIVER "ON")
+set(CMAKE_CUDA_STRICT_FLAGS "ON")
+
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_CUDA_ARCHITECTURES 86)
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -G -rdc=true")
+#Set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -G -rdc=true -arch=sm_86")
+
+include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+
+add_subdirectory(src)
+#add_subdirectory(bench)
+#add_subdirectory(tests)

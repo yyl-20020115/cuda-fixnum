@@ -1,11 +1,12 @@
 #pragma once
+#include <cuda_runtime.h>
 
-#include "functions/quorem_preinv.cu"
-#include "functions/divexact.cu"
-#include "functions/chinese.cu"
-#include "functions/multi_modexp.cu"
-#include "modnum/modnum_monty_cios.cu"
-
+#include "quorem_preinv.cu"
+#include "divexact.cu"
+#include "chinese.cu"
+#include "multi_modexp.cu"
+#include "../modnum/modnum_monty_cios.cu"
+#include "../functions/modexp.cu"
 namespace cuFIXNUM {
 
 template< typename fixnum >

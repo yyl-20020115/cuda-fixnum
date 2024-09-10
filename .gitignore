@@ -38,3 +38,4 @@ tests/paillier_*
 # Debug files
 *.dSYM/
 *.class
+[Bb]uild/

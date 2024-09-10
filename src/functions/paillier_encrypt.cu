@@ -1,8 +1,10 @@
 #pragma once
+#include <cuda_runtime.h>
 
-#include "functions/quorem_preinv.cu"
-#include "functions/multi_modexp.cu"
-#include "modnum/modnum_monty_cios.cu"
+#include "quorem_preinv.cu"
+#include "multi_modexp.cu"
+#include "../functions/modexp.cu"
+#include "../modnum/modnum_monty_cios.cu"
 
 namespace cuFIXNUM {
 

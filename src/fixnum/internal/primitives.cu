@@ -1,8 +1,8 @@
 #pragma once
-
 #include <cstdint>
 #include <cassert>
 #include <type_traits>
+#include "cuda_runtime.h"
 
 namespace cuFIXNUM {
 
@@ -627,7 +627,7 @@ namespace internal {
         v0 = lookup_reciprocal(d9); // 11 bits
         t0 = v0 * v0 * d40;
         v1 = (v0 << 11) - (t0 >> 40) - 1;   // 21 bits
-        t0 = v1 * ((1UL << 60) - (v1 * d40));
+        t0 = v1 * ((1ULL << 60) - (v1 * d40));
         v2 = (v1 << 13) + (t0 >> 47); // 34 bits
 
         e = -(v2 * d63) + ((v1 >> 1) & d0_mask);

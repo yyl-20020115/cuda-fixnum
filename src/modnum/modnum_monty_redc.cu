@@ -1,6 +1,7 @@
 #pragma once
 
-#include "modnum/internal/monty.cu"
+#include "../functions/modinv.cu"
+#include "internal/monty.cu"
 
 namespace cuFIXNUM {
 

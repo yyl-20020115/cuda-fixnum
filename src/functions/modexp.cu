@@ -1,8 +1,8 @@
 #pragma once
+#include <cuda_runtime.h>
 
-#include "functions/internal/modexp_impl.cu"
-#include "modnum/modnum_monty_cios.cu"
-
+#include "internal/modexp_impl.cu"
+#include "../modnum/modnum_monty_cios.cu"
 namespace cuFIXNUM {
 
 template< typename modnum_tp >

@@ -1,6 +1,7 @@
 #pragma once
+#include <cuda_runtime.h>
 
-#include "functions/modinv.cu"
+#include "modinv.cu"
 
 namespace cuFIXNUM {
 

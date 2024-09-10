@@ -1,3 +1,6 @@
+#include "cuda_runtime.h"
+#include "sm_30_intrinsics.h"
+#include "device_launch_parameters.h"
 
 
 template< typename digit >
@@ -13,12 +16,12 @@ struct nail_data
 {
     typedef typename digit digit;
     // FIXME: This doesn't work if digit is signed
-    constexpr digit DIGIT_MAX = ~(digit)0;
-    constexpr int DIGIT_BITS = sizeof(digit) * 8;
-    constexpr int NON_NAIL_BITS = DIGIT_BITS - NAIL_BITS;
-    constexpr digit NAIL_MASK = DIGIT_MAX << NON_NAIL_BITS;
-    constexpr digit NON_NAIL_MASK = ~NAIL_MASK;
-    constexpr digit NON_NAIL_MAX = NON_NAIL_MASK; // alias
+    const digit DIGIT_MAX = ~(digit)0;
+    const int DIGIT_BITS = sizeof(digit) * 8;
+    const int NON_NAIL_BITS = DIGIT_BITS - NAIL_BITS;
+    const digit NAIL_MASK = DIGIT_MAX << NON_NAIL_BITS;
+    const digit NON_NAIL_MASK = ~NAIL_MASK;
+    const digit NON_NAIL_MAX = NON_NAIL_MASK; // alias
 
     // A nail must fit in an int.
     static_assert(NAIL_BITS > 0 && NAIL_BITS < sizeof(int) * 8,
@@ -51,10 +54,10 @@ hand_resolve_nails(digit &r)
     constexpr int WIDTH = warpSize;
     // TODO: This is ugly
     typedef nail_data<digit, NAIL_BITS> nd;
-    typedef subwarp_data<WIDTH> subwarp;
+    typedef slot_layout<WIDTH> subwarp;
 
     int nail, nail_hi;
-    nail = hand_extract_nail<digit, NAIL_BITS>(r);
+    nail = hand_extract_nail<digit, NAIL_BITS>(r);476
     nail_hi = subwarp::shfl(nail, subwarp::toplaneIdx);
 
     nail = subwarp::shfl_up0(nail, 1);
@@ -76,7 +79,7 @@ hand_mullo_nail(digit &r, digit a, digit b)
     // FIXME: also need to check that digit has enough space for the
     // accumulated nails.
 
-    typedef subwarp_data<WIDTH> subwarp;
+    typedef slot_layout<WIDTH> subwarp;
 
     digit n = 0; // nails
 
